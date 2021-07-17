@@ -7,16 +7,33 @@
 
 int quickSort (FILE* dat){
 	//int* CNPJ;
-	int i;
 	//CNPJ = (int *) malloc(900 * sizeof(int));
 	
 	char buffer[1024];
-	char aux[] = "";
+	int aux[100];
 	int row = 0;
+	int i = 0, j = 0;
 	int column = 0;
+	int valor;
+	char valueStr[20];
 	while(fgets(buffer, 1024, dat)){
         //column = 0;
         //row++;
+        char* value = strtok(buffer, ";");
+        value = strtok(NULL, ";");
+        for (j = 0; j < 20; j++){
+        	valueStr[j] = value[j];
+		}
+        valor = atoi(valueStr);
+        printf("%s", valueStr);
+        //fputs(valueStr, stdout);
+        printf("\n%i\n\n", valor);
+        aux[i] = valor;
+        //strcpy(aux, value);
+        //fputs(aux, stdout);
+        i++;
+        
+        /*
         char* value = strtok(buffer, "\n");
         
         while(value)
@@ -31,7 +48,7 @@ int quickSort (FILE* dat){
 		}
 		fputs(aux, stdout);
 }
-		printf("\n\n%c", aux[0]);
+		printf("\n\n%c", aux[0]);*/
 
 		
         
@@ -46,6 +63,11 @@ int quickSort (FILE* dat){
 			column++;
 		}*/
 
+}
+/*
+for (i = 0; i < 100; i++){
+	printf("%i\n", aux[i]);
+}*/
 }
 		
 	
