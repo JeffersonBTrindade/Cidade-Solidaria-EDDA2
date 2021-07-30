@@ -8,5 +8,6 @@ int getFileLines(FILE* dat) {
    			countLines = countLines + 1;
 	   	}
    	}
+   	fclose(dat);
     return countLines;
 }

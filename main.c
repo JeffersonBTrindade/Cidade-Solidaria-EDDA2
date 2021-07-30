@@ -1,6 +1,5 @@
 #include "converter_csv_para_dat.h"
 #include "ler_linhas_dat.h"
-//#include "QuickSort.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -20,6 +19,67 @@ typedef struct {
 
 // separar este programa em um módulo chamado: ordenar_dat_por_cpf.h
 int quickSort(Registro *vetorRegistro, int start, int end); 
+
+int organizaDat(Registro* vetor, FILE* dat) {
+	int atributo = 0;
+	int index;
+		
+		fputs(vetor[index].ENTIDADE, dat);
+		fputs(";", dat);
+		fputs(vetor[index].CNPJ, dat);
+		fputs(";", dat);
+		fputs(vetor[index].EMAIL, dat);
+		fputs(";", dat);
+		fputs(vetor[index].TELEFONE, dat);
+		fputs(";", dat);
+		fputs(vetor[index].COMUNIDADE, dat);
+		fputs(";", dat);
+		fputs(vetor[index].ENDERECO, dat);
+		fputs(";", dat);
+		fputs(vetor[index].ASSENTAMENTO, dat);
+		fputs(";", dat);
+		fputs(vetor[index].SUBPREFEITURA, dat);
+		fputs(";", dat);
+		fputs(vetor[index].QNTCESTAS, dat);
+		fputs(";", dat);
+			
+	}
+	
+	atributo++;
+	
+	
+	
+	
+	
+	
+	
+	char buffer[1024];
+	char aux[] = "";
+	int row = 0;
+	int column = 0;
+	while (fgets(buffer, 1024, fp)) {
+        column = 0;
+        row++;
+        if (row == 1) continue;
+        char* value = strtok(buffer, ";");
+        while (value) {
+          	if (column != 8)
+           	{
+           		strcpy(aux, value);
+               	fputs(aux, dat);
+               	fputs(";", dat);
+			} else {
+				strcpy(aux, value);
+               	fputs(aux, dat);
+			}
+				
+			value = strtok(NULL, ";");
+            column++;
+        }
+    }
+	//fclose(dat);
+	fclose(fp);
+}
 
 int partition(Registro *vetorRegistro, int start, int pivot) 
 {
@@ -77,51 +137,35 @@ int main () {
 
 //	conversion(fp, dat);
 
-
-	
 	// abre o dat para leitura
 	
-	FILE* sla = fopen("OSC.dat", "r");
-//	
-	if (!sla) {
+	FILE* readQntLines = fopen("OSC.dat", "r");
+
+	if (!readQntLines) {
         printf("Unable to read file.\n");
         return 1;
     }
+    int qntlinhas = getFileLines(readQntLines);
     
-    //printf("Lines: %i\n\n", getFileLines(sla));
-    int qntlinhas = getFileLines(sla);
-    //printf("%i", qntlinhas);
-    //char c;
-    fclose(sla);
+    
     
     FILE* readDat = fopen("OSC.dat", "r");
 
 	char array[] = "";
 	Registro vetor[qntlinhas];
 	int i = 0;
-/*	for (i; i < 70; i++) {
-		strcpy(vetor[i].ENTIDADE, "");
-		strcpy(vetor[i].CNPJ, "");
-		strcpy(vetor[i].EMAIL, "");
-		strcpy(vetor[i].TELEFONE, "");
-		strcpy(vetor[i].COMUNIDADE, "");
-		strcpy(vetor[i].ENDERECO, "");
-		strcpy(vetor[i].ASSENTAMENTO, "");
-		strcpy(vetor[i].SUBPREFEITURA, "");
-		strcpy(vetor[i].QNTCESTAS, "");
-	}*/
+
     while (fgets(buffer, 1024, readDat)) {
     	column = 0;
 		char* value = strtok(buffer, ";");
 		while (value) {
-			//printf("%s\n\n", value);
+			
 			if (column == 0) {
 				strcpy(vetor[index].ENTIDADE, value);
 			}
 			
 			if (column == 1) {
 				vetor[index].CNPJ = atoll(value);
-				//strcpy(vetor[index].CNPJ, value);
 			}
 			
 			if (column == 2) {
@@ -163,24 +207,15 @@ int main () {
 		printf("Entidade: %lld\n", vetor[a].CNPJ);
 	}
 	
-	
 	quickSort(vetor, 0, (qntlinhas-1));
 	
 	printf("\n\n\n");
 	
+	a = 0;
 	for(a; a < qntlinhas; a++) {
 		printf("Entidade: %lld\n", vetor[a].CNPJ);
 	}
-	/*printf("\n\n\n");
-	printf("Entidade: %s", vetor[0].ENTIDADE);
-	printf("CNPJ: %s", vetor[0].CNPJ);
-	printf("email: %s", vetor[0].EMAIL);
-	printf("telefone: %s", vetor[0].TELEFONE);
-	printf("comunidade: %s", vetor[0].COMUNIDADE);
-	printf("endereco: %s", vetor[0].ENDERECO);
-	printf("asentamenteo: %s", vetor[0].ASSENTAMENTO);
-	printf("sub: %s", vetor[0].SUBPREFEITURA);
-	printf("cestas: %s", vetor[0].QNTCESTAS);*/
+	
 	
     // salvo o arquivo em um array deve-se usar o quick sort pelo cpf, 
 	// que deve ser lido como numero (?) para ordenação
