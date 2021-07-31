@@ -40,57 +40,43 @@ typedef struct
 }
 registro_osc;
 
-typedef struct
-{
-	char	nomecompleto			[120+1];
-	char	datanasc				[10+1];
-	char	cpf						[11+1];
-	char	municipio				[100+1];
-	char	logradouro 				[150+1];
-	char	nro						[7+1];
-	char	complemento				[10+1];
-	char	bairro					[300+1];
-	char	celular					[11+1];
-	char	possuipet;
-
-}
-registro_ass;
-
-
 /*variaveis globais*/
 long int 	TAMANHO_VETOR;
 int			gerenciaOSC;
 
 /*Funções*/
 
-int validaTipoAssentamento(char *tipo){
+/*int validaTipoAssentamento(char *tipo){
+	int i;
+	bool valido = false;
 	char	tiposValidos[15][30] =
 	{
-	"Favela",
-	"Cortiço",
-	"Ocupação",
-	"Loteamento",
-	"Comunidade indígena",
-	"Grupo de mulheres",
-	"Imigrantes ou Refugiados",
-	"Criança e adolescente",
-	"Idosos",
-	"Minorias éttnico-raciais",
-	"LGBTI",
-	"Pessoas em situação de rua",
-	"Egresso do sistema prisional",
-	"Pessoa com deficiência",
-	"Outros"
+	"favela",
+	"cortiço",
+	"ocupação",
+	"loteamento",
+	"comunidade indígena",
+	"grupo de mulheres",
+	"imigrantes ou Refugiados",
+	"criança e adolescente",
+	"idosos",
+	"minorias étnico-raciais",
+	"lgbti",
+	"pessoas em situação de rua",
+	"egresso do sistema prisional",
+	"pessoa com deficiência",
+	"outros"
 	};
-	int i, achou = 0;
+	
 	for(i=0; i<15; i++)
-		if(strcmp(tipo,tiposValidos[i])==0)
+		if(strcmp(tipo,tiposValidos[i]) == 0)
 		{
-			achou = 1;
+			valido = true;
 			break;
 		}
-	return(achou);
-}
+	
+	return valido;
+}*/
 
 int validaSubprefeitura(char * subprefeitura)
 {
@@ -137,15 +123,4 @@ int validaSubprefeitura(char * subprefeitura)
 		}
 		//break;
 	return(achou);
-}
-
-int validaCNPJ(char* cnpj)
-{
-	int i;
-	if(strlen(cnpj)!=14)
-		return(0);
-	for(i=0; cnpj[i]!='\0'; i++)
-		if(cnpj[i]<'0' || cnpj[i]>'9')
-			return(0);
-	return(1);
 }

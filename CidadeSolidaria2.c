@@ -11,23 +11,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include <stdbool.h>
 #include "lib.h"
 
-     
-/*Protï¿½tipos*/
-int  MenuPrincipal (void);
-void MenuEntidades (void);
-void MenuAssitidos (void);
-void MenuDonativos (void);
-void MenuAtendimento (void);
-int buscaBinaria(registro_osc *v, char *cnpj, char* email, int ini, int fim);
-void Login (void);
-void Sobre (void);
-void ordenaOscCNPJDAT(void);
-long int findSize(char file_name[]) ;
+int partition(registro_osc *vetorRegistro, int start, int pivot);
 int quickSort(registro_osc *vetorRegistro, int start, int end); 
-int partition(registro_osc *vetorRegistro, int start, int pivot) ;
-void mostraCNPJ (registro_osc  *v, int tam);
+int buscaBinaria(registro_osc *v, char *cnpj, char* email, int ini, int fim);
+long int findSize(char file_name[]);
+void ordenaOscCNPJDAT(void);
+void escreveNoDat (registro_osc  *v, int tam);
+void errolerCSV (void);
+void errogravarDAT (void);
+void converte (void);
+void mostraDAT(void);
+void CadastroEntidade(void);
+bool ValidaCNPJ(char *cnpj);
+bool validaTipoAssentamento(char *tipo);
+
+int  MenuPrincipal (void);
+void GerenciamentoEntidades (void);
+void GerenciamentoAssistidos (void);
+void GerenciamentoDonativos (void);
+void MenuAtendimento (void);
+void MaisInformacoes (void);
+void Login (void);
 
 /* Variï¿½veis globais */
 registro_osc 	informacao;
@@ -123,8 +130,6 @@ void ordenaOscCNPJDAT(void)
    	  	getch();
    	  	exit(0);
    }
-   //debug
-   //printf ("\n OSC.DAT tem %ld bytes", findSize("OSC.DAT") );    getch();
 
    // Copiar o conteï¿½do do OSC.DAT para a memï¿½ria alocada   
    // abre o arquivo OSC.DAT para leitura (e depois transportï¿½-lo para memï¿½ria) 
@@ -137,23 +142,23 @@ void ordenaOscCNPJDAT(void)
    }
    while (!feof(ArqDAT))
    {
-   	 //Lï¿½ do arquivo para o vetor
    	 fread (&vet[ind], sizeof(registro_osc), 1, ArqDAT);
    	 if (!feof(ArqDAT))
    	    ind++;
    }
    fclose(ArqDAT);
-   //debug
-   //printf ("\nLeu %i registros", ind ); getch();
    
    //Ordena o vetor pelo CNPJ
    quickSort(vet, 0, ind-1) ;
    
    // Mostra os CNPJs ordenados
-   mostraCNPJ(vet, ind);
+   escreveNoDat(vet, ind);
+   
+   printf("\nDados do .dat ordenados a partir de CNPJ crescente!");
+   getch();
 }
 
-void mostraCNPJ (registro_osc  *v, int tam)
+void escreveNoDat (registro_osc  *v, int tam)
 {
 	FILE *DAT;
 	DAT = fopen("OSC.DAT", "w");
@@ -318,10 +323,11 @@ void  converte (void)
 			errogravarDAT();
 	    linha++;
 	}
-	printf ("\n[%i] registro(s) convertido(s) com sucesso!!", qtdRegistros);
+	printf ("\n[%i] registro(s) convertido(s) de csv para dat com sucesso!!", qtdRegistros);
 	fclose (CSV);
 	fclose (DAT);
 	getch();
+	system("cls");
 }
 
 void mostraDAT (void)
@@ -376,62 +382,193 @@ void mostraDAT (void)
 	system ("notepad RELOSC.TXT ");
 }
 
+void CadastroEntidade(void) {
+	registro_osc novaEntidade;
+	//char cnpj[14+1];
+	bool cnpjValido = false;
+	
+	//novaEntidade = (registro_osc *) malloc (sizeof(registro_osc));
+	
+	system("color 0E");
+	    
+	system("cls"); 
+	
+	printf ("----------------------------------------------------------\n");
+    printf ("        CADASTRAR NOVA ENTIDADE\n"); 
+    printf ("----------------------------------------------------------\n\n");
+    printf ("INSIRA AS INFORMAÇÕES QUE DESEJA CADASTRAR: \n\n\n");
+	
+	printf("Entidade, movimento ou instituição responsável: ");
+	gets(novaEntidade.entidade); fflush(stdin);
+	/*printf("\n\n%s", novaEntidade.entidade);
+	getch();*/
+	
+	do {
+		printf("\nCNPJ: ");
+		gets(novaEntidade.cnpj); fflush(stdin);
+		
+		//cnpjValido = ValidaCNPJ(novaEntidade.cnpj);
+		
+	} while(!ValidaCNPJ(novaEntidade.cnpj));
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	printf("\ne-mail: ");
+	gets(novaEntidade.email); fflush(stdin);
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	printf("\ntelefone: ");
+	gets(novaEntidade.fone); fflush(stdin);
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	printf("\nlocalidade para a qual se destinarão as doações (comunidade beneficiada): ");
+	gets(novaEntidade.comunidade); fflush(stdin);
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	printf("\nendereço da área de destino das doações: ");
+	gets(novaEntidade.enderdoar); fflush(stdin);
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+		
+	printf("\ntipos de assentamento precário/grupo disponíveis (digite uma das opções abaixo):\n");
+	printf("\tfavela;\n");
+	printf("\tcortico;\n");
+	printf("\tocupacao;\n");
+	printf("\tloteamento;\n");
+	printf("\tcomunidade indigena;\n");
+	printf("\tgrupo de mulheres;\n");
+	printf("\timigrantes ou refugiados;\n");
+	printf("\tcrianca e adolescente;\n");
+	printf("\tidosos;\n");
+	printf("\tminorias etnico-raciais;\n");
+	printf("\tlgbti;\n");
+	printf("\tpessoas em situação de rua;\n");
+	printf("\tegresso do sistema prisional;\n");
+	printf("\tpessoa com deficiencia;\n");
+	printf("\toutros;\n");
+	printf("Insira sua escolha: ");
+	
+	do {
+		
+		gets(novaEntidade.tipoassentamento); fflush(stdin);
+				
+	} while(!validaTipoAssentamento(novaEntidade.tipoassentamento));
+	
+	getch();
+}
 
+bool ValidaCNPJ(char *cnpj) {
+	int i;
+	
+	if (strlen(cnpj) != 14) {
+		printf("CNPJ invalido, tamanho deve ser de 14 dígitos");
+		return false;
+	}
+	
+	for (i = 0; i < 14; i++) {
+		if (!isdigit(cnpj[i])) {
+			printf("CNPJ invalido, digite apenas números!");
+			return false;	
+		}
+	}
+	
+	return true;
+}
+
+bool validaTipoAssentamento(char *tipo) {
+	//char *tipoAux;
+	int i, j;
+	//char *lowerTipo;
+	
+	//tipoAux = (char *) malloc(sizeof(tipo));
+	//lowerTipo = (char *) malloc(sizeof(tipo));
+
+	//tipoAux = tipo;
+	
+	/*for(i=0; i<strlen(tipoAux); i++)
+		lowerTipo[i] = tolower(tipoAux[i]);*/
+	
+	char tiposValidos[15][30] =
+	{
+		"favela",
+		"cortico",
+		"ocupacao",
+		"loteamento",
+		"comunidade indigena",
+		"grupo de mulheres",
+		"imigrantes ou refugiados",
+		"crianca e adolescente",
+		"idosos",
+		"minorias etnico-raciais",
+		"lgbti",
+		"pessoas em situacao de rua",
+		"egresso do sistema prisional",
+		"pessoa com deficiencia",
+		"outros"
+	};
+	
+	for(i=0; i<15; i++) {
+		for(j = 0; j<strlen(tipo); j++) {
+			if(tipo[j] != tiposValidos[i][j]) {
+				break;
+			};	
+			
+			if (strlen(tiposValidos[i]) == strlen(tipo) && j == strlen(tipo)-1) return true;
+		}
+	}
+	printf("\ntipo de assentamento/grupo invalido, insira novamente: ");
+	return false;
+}
 
 /*Programa principal*/
 int main(){ 
-
-    /*Add acentos e ï¿½*/
-	setlocale (LC_ALL, ""); 
-	/*Tamanho da Janela*/
-	//system("mode con:cols=75 lines=30");
+	setlocale (LC_ALL, "Portuguese"); 
 	
-	/*Declaraï¿½ï¿½o de variï¿½veis*/
+	converte();
+	ordenaOscCNPJDAT();
+	
     int opcao; 
-	Login();
-	/*Captura de opï¿½ï¿½o no MenuPrincipal*/
+	//Login();
+	
     do{ 
         system ("cls"); 
         opcao = MenuPrincipal(); 
 
-            switch (opcao) { 
-                case 1: 
-                    MenuEntidades(); 
-                break; 
-                case 2: 
-                    MenuAssistidos(); 
-                break; 
-                case 3: 
-                    MenuDonativos();
-				break; 
-				case 4: 
-                    MenuAtendimento();
-                break;  
-                case 5:
-                    Sobre();
-                break;
-                case 6:
-                    converte();
-                break;
-                case 7:
-                    mostraDAT();
-                break;
-                case 8:
-                    ordenaOscCNPJDAT();
-                break;                
-                case 0: 
-                    printf ("Saindo....\n"); 
-                    exit(0); 
-                default: 
+        switch (opcao) { 
+            case 1: 
+                GerenciamentoEntidades(); 
+            	break;
+				 
+            case 2: 
+                GerenciamentoAssistidos(); 
+            	break; 
+            	
+            case 3: 
+                GerenciamentoDonativos();
+				break;
+				
+			case 4:
+                MenuAtendimento();
+            	break;
+				 
+            case 5:
+                MaisInformacoes();
+            	break;
+            	               
+            case 0: 
+                printf ("Saindo....\n"); 
+                exit(0); 
                 
-                    /*cores do fundo e texto*/
-					system("color 0C");
-					/*system("cls");*/ 
-					printf ("\n\t\tOPï¿½ï¿½O INVï¿½LIDA!!!\n\n"); 
-                    printf ("Tecle [Enter] para continuar..."); 
-                    getchar(); 
-                } 
-    }while(1); 
+            default: 
+				printf("\n\n\n\t\tOpção inválida, tente novamete\n\n"); 
+                printf ("Tecle [Enter] para continuar..."); 
+                getch(); 
+        } 
+        
+    } while(1); 
 
 return 0; 
 }
@@ -439,68 +576,75 @@ return 0;
 
 /*Funï¿½ï¿½o MenuPrincipal*/
 int MenuPrincipal (void){ 
+	int imput;
 
-	/*cores
-	0 - Preto
-	1 - Azul	2 - Verde	3 - Verde-ï¿½gua	4 - Vermelho	5 - Roxo	6 - Amarelo
-	7 - Branco	8 - Cinza	9 - Azul claro	A - Verde Claro	B - Verde-ï¿½gua claro
-	C - Vermelho Claro	D - Lilï¿½s	E - Amarelo Claro	F - Branco Brilhante*/
-	
-	/*cores do fundo e texto*/
-    system("color B0");
-    
-	/* Declaraï¿½ï¿½o de variï¿½veis*/
-    int opc;
+    system("color 20");
 	
     printf ("----------------------------------------------------------\n");
-    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDï¿½RIA\n"); 
+    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDÁRIA\n"); 
     printf ("----------------------------------------------------------\n\n");
     printf ("                   << MENU PRINCIPAL >>\n\n"); 
     printf ("      1 - Cadastro de entidades da sociedade civil\n"); 
     printf ("      2 - Cadastro de assistidos\n"); 
     printf ("      3 - Cadastro de donativos\n"); 
     printf ("      4 - Atendimento\n");
-    printf ("      5 - Sobre este sistema\n");
-    printf ("      6 - Converter CSV para DAT\n");
-    printf ("      7 - Mostar conteï¿½do do DAT\n");
-    printf ("      8 - Ordena OSC.DAT pelo CNPJ\n");
-    printf ("      0 - Sair do Programa\n\n"); 
-    printf ("----------------------------------------------------------\n");
-    printf ("Digite a opï¿½ï¿½o desejada e tecle [Enter]: ");
-    scanf ("%d", &opc); 
-    printf ("----------------------------------------------------------\n");
-    getchar(); 
+    printf ("      0 - Sair do Programa\n\n");
+    
+    printf ("      5 - Mais informações\n");
+    printf ("----------------------------------------------------------\n\n");
+    printf ("Digite a opção desejada e tecle [Enter]: ");
+    scanf ("%d", &imput); 
 
-return opc; 
+	return imput; 
 }
 
-/* Funï¿½ï¿½o MenuEntidades */
-void MenuEntidades (void){ 
-
-	/*cores do fundo e texto*/
-    system("color 0B");
-
-      FILE *arquivo; 
-
-      system("cls"); 
+void GerenciamentoEntidades (void){ 
+	int imput;
+	bool opcaoValida = false;
 	
-	printf ("----------------------------------------------------------\n");
-    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDï¿½RIA\n"); 
-    printf ("----------------------------------------------------------\n\n");
-	printf ("      << CADASTRO DE ENTIDADES DA SOCIEDADE CIVIL >>\n\n"); 
-    printf ("      1 - Cadastro de nova entidade\n"); 
-    printf ("      2 - Consulta entidades cadastradas\n"); 
-    printf ("      0 - Voltar ao MENU PRINCIPAL\n\n"); 
-    printf ("----------------------------------------------------------\n");
-    /*printf ("Digite a opï¿½ï¿½o desejada e tecle [Enter]: \n\n\n");*/
-    printf ("Tecle [Enter] para voltar ao MENU PRINCIPAL...");
-	getchar(); 
+	do {
+	    system("color 0E");
+	    
+	    system("cls"); 
+		
+		printf ("----------------------------------------------------------\n");
+	    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDÁRIA\n"); 
+	    printf ("----------------------------------------------------------\n\n");
+		printf ("         GERENCIAMENTO DE ENTIDADES DA SOCIEDADE CIVIL \n\n"); 
+	    printf ("      1 - Cadastro de nova entidade\n"); 
+	    printf ("      2 - Consulta entidades cadastradas\n"); 
+	    printf ("      0 - Voltar ao MENU PRINCIPAL\n\n"); 
+	    printf ("----------------------------------------------------------\n\n");
+	    printf ("Digite a opção desejada e tecle [Enter]: ");
+    	scanf("%d", &imput); fflush(stdin);
 
-
+    
+	    switch (imput) {
+	    	case 1:
+	    		CadastroEntidade();
+	    		opcaoValida = true;
+	    		break;
+	    	
+	    	case 2:
+	    		//ConsultaEntidades();
+	    		opcaoValida = true;
+	    		break;
+	    		
+	    	case 0:
+				opcaoValida = true;
+				break;
+				
+			default:
+				printf("\n\n\n\t\tOpção inválida, tente novamete\n\n"); 
+	            printf ("Tecle [Enter] para continuar..."); 
+	            getch(); fflush(stdin);	
+		}
+		
+	} while (!opcaoValida);
 }
 
 /*Funï¿½ï¿½o MenuAssitidos */
-MenuAssistidos (void){ 
+void GerenciamentoAssistidos (void){ 
 	
 	/*cores do fundo e texto*/
     system("color F4");
@@ -521,7 +665,7 @@ MenuAssistidos (void){
 } 
 
 /*Funï¿½ï¿½o MenuDonativos */
-void MenuDonativos (void){ 
+void GerenciamentoDonativos (void){ 
 	
 	/*cores do fundo e texto*/
     system("color 0E");
@@ -565,74 +709,86 @@ void MenuAtendimento (void){
 }
 
 /* Funï¿½ï¿½o Sobre Sistema */
-void Sobre (void){
+void MaisInformacoes (void){
    
     /*cores do fundo e texto*/
     system("color 10");
     
 	system ("cls");
     printf ("---------------------------------------------------------------------------\n");
-	printf ("			        SOBRE O SISTEMA   \n");
+	printf ("			        MAIS INFORMAÇÕES   \n");
 	printf ("---------------------------------------------------------------------------\n\n");
 	system("color A0");
-	printf ("  IFSP - INSTITUTO FEDERAL DE EDUCAï¿½ï¿½O, CIï¿½NCIA E TECNOLOGIA DE Sï¿½O PAULO\n\n");
-	printf ("     TECNOLOGIA EM ANï¿½LISE E DESENVOLVIMENTO DE SISTEMAS - 2ï¿½ SEMESTRE\n\n\n\n");
-    printf ("PROJETO DA DISCIPLINA ESTRUTURA DE DADOS: Aï¿½ï¿½o Social Cidade Solidï¿½ria\n");
+	printf ("  IFSP - INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE SÃO PAULO\n\n");
+	printf ("     TECNOLOGIA EM ANÁLISE E DESENVOLVIMENTO DE SISTEMAS (TADS) - SEGUNDO SEMESTRE\n\n\n\n");
+    printf ("PROJETO: Cidade Solidária\n");
 	printf ("\n");
-    printf ("PROFESSORA: Eurides Balbino\n\n");
-	printf ("EQUIPE DE DESENVOLVIMENTO:\n");
-    printf ("Igor Kazuhiko       Matr.: 3061973\n");
-	printf ("Rivaildo Ferreira   Matr.: 3063968\n\n");
+    printf ("PROFESSORA: Eurides Balbino\n\n\n");
+	printf ("DESENVOLVEDORES:\n\n");
+    printf ("\tJefferson Trindade       Matr.: 3060128\n");
+	printf ("\tHenrrique Cabral         Matr.: 3060632\n\n");
 	printf ("---------------------------------------------------------------------------\n\n");
     printf ("Tecle [Enter] para voltar ao MENU PRINCIPAL...");
-    getchar();
+    getch();
     
 }
 
 void Login (void) {
 	char *cnpj;
-	cnpj = (char *) malloc(sizeof(char) * 15);
 	char *email;
+	FILE * ArqDAT;
+	registro_osc  *vet;
+	int  ind=0;
+	int sucessoLogin = 0;
+	
+	cnpj = (char *) malloc(sizeof(char) * 15);
 	email = (char *) malloc(sizeof(char) * 101);
-	FILE * ArqDAT;	
-    registro_osc  *vet;   
-    int  ind=0;
+	vet = (registro_osc  *) malloc (findSize("OSC.DAT"));
+	if ( vet==NULL )
+	{
+		printf ("\nNão foi possível alocar %ld bytes em memória", findSize("OSC.DAT") );
+		getch();
+	  	exit(0);
+	}
 
-	printf("---------------------------------------------\n");
-	printf("		INFORME LOGIN			\n");
-	printf("---------------------------------------------\n");
-	printf("Informe CNPJ: ");
-	scanf("%s", cnpj);
-	//gets(cnpj);
-	printf("\n\nInforme e-mail: ");
-	//gets(email);
-	scanf("%s", email);
-	printf("daqui naõa passa");
+	ArqDAT = fopen("OSC.DAT", "r");	
+	if (  ArqDAT==NULL )
+	{
+		printf ("\nErro o ler OSC.DAT!");
+		getch();
+		exit(0);		
+	}
 
-    vet = (registro_osc  *) malloc (findSize("OSC.DAT"));
-   if ( vet==NULL )
-   {
-   	  	printf ("\nNï¿½o foi possï¿½vel alocar %ld bytes em memï¿½ria", findSize("OSC.DAT") );
-   	  	getch();
-  	  	exit(0);
-   }
- 
-   ArqDAT = fopen("OSC.DAT", "r");	
-   if (  ArqDAT==NULL )
-   {
-      printf ("\nErro o ler OSC.DAT!");
-	  getch();
-	  exit(0);		
-   }
+	while (!feof(ArqDAT))
+	{
+		fread (&vet[ind], sizeof(registro_osc), 1, ArqDAT);
+		if (!feof(ArqDAT))
+			ind++;
+	}
 
-   while (!feof(ArqDAT))
-   {
-   	 fread (&vet[ind], sizeof(registro_osc), 1, ArqDAT);
-   	 if (!feof(ArqDAT))
-   	    ind++;
-   }
-    fclose(ArqDAT);
+	fclose(ArqDAT);
+	
+	system("cls");
+	do {
+		system("color 40");
+		
+		printf("---------------------------------------------\n");
+		printf("		INFORME LOGIN			\n");
+		printf("---------------------------------------------\n");
+		
+		printf("Informe CNPJ: ");
+		scanf("%s", cnpj);
+		
+		printf("\nInforme e-mail: ");
+		scanf("%s", email);
 
-	printf("%i", buscaBinaria(vet, cnpj, email, 0, ind));
-	getch();
+		sucessoLogin = buscaBinaria(vet, cnpj, email, 0, ind);
+
+		if (!sucessoLogin) {
+			system("cls");
+			printf("FALHA AO REALIZAR LOGIN, INFORMAÇÕES INCORRETAS\n\n");
+		}
+		
+	} while (!sucessoLogin);
+		
 }
