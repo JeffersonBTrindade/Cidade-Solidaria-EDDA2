@@ -26,7 +26,9 @@ void converte (void);
 void mostraDAT(void);
 void CadastroEntidade(void);
 bool ValidaCNPJ(char *cnpj);
-bool validaTipoAssentamento(char *tipo);
+bool tipoAssentamento(char *tipo);
+bool subprefeitura(char * subprefeitura);
+
 
 int  MenuPrincipal (void);
 void GerenciamentoEntidades (void);
@@ -383,8 +385,8 @@ void mostraDAT (void)
 }
 
 void CadastroEntidade(void) {
+	FILE *dat;
 	registro_osc novaEntidade;
-	//char cnpj[14+1];
 	bool cnpjValido = false;
 	
 	//novaEntidade = (registro_osc *) malloc (sizeof(registro_osc));
@@ -413,50 +415,124 @@ void CadastroEntidade(void) {
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
-	printf("\ne-mail: ");
+	printf("\nE-mail: ");
 	gets(novaEntidade.email); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
-	printf("\ntelefone: ");
+	printf("\nTelefone: ");
 	gets(novaEntidade.fone); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
-	printf("\nlocalidade para a qual se destinarão as doações (comunidade beneficiada): ");
+	printf("\nLocalidade para a qual se destinarão as doações (comunidade beneficiada): ");
 	gets(novaEntidade.comunidade); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
-	printf("\nendereço da área de destino das doações: ");
+	printf("\nEndereço da área de destino das doações: ");
 	gets(novaEntidade.enderdoar); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 		
-	printf("\ntipos de assentamento precário/grupo disponíveis (digite uma das opções abaixo):\n");
-	printf("\tfavela;\n");
-	printf("\tcortico;\n");
-	printf("\tocupacao;\n");
-	printf("\tloteamento;\n");
-	printf("\tcomunidade indigena;\n");
-	printf("\tgrupo de mulheres;\n");
-	printf("\timigrantes ou refugiados;\n");
-	printf("\tcrianca e adolescente;\n");
-	printf("\tidosos;\n");
-	printf("\tminorias etnico-raciais;\n");
-	printf("\tlgbti;\n");
-	printf("\tpessoas em situação de rua;\n");
-	printf("\tegresso do sistema prisional;\n");
-	printf("\tpessoa com deficiencia;\n");
-	printf("\toutros;\n");
+	printf("\nTipos de assentamento precário/grupo disponíveis (digite uma das opções abaixo):\n");
+	printf("\tFavela;\n");
+	printf("\tCortico;\n");
+	printf("\tOcupacao;\n");
+	printf("\tLoteamento;\n");
+	printf("\tComunidade indigena;\n");
+	printf("\tGrupo de mulheres;\n");
+	printf("\tImigrantes ou Refugiados;\n");
+	printf("\tCrianca e Adolescente;\n");
+	printf("\tIdosos;\n");
+	printf("\tMinorias etnico-raciais;\n");
+	printf("\tLGBTI;\n");
+	printf("\tPessoas em situação de rua;\n");
+	printf("\tEgresso do sistema prisional;\n");
+	printf("\tPessoa com deficiencia;\n");
+	printf("\tOutros;\n");
 	printf("Insira sua escolha: ");
 	
 	do {
 		
 		gets(novaEntidade.tipoassentamento); fflush(stdin);
 				
-	} while(!validaTipoAssentamento(novaEntidade.tipoassentamento));
+	} while(!tipoAssentamento(novaEntidade.tipoassentamento));
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
 	
+	printf("\nSubprefeitura (digite uma das opções abaixo):\n");
+	printf("\tAricanduva;\n");
+	printf("\tButanta;\n");
+	printf("\tCampo Limpo;\n");
+	printf("\tCapela do Socorro;\n");
+	printf("\tCasa Verde;\n");
+	printf("\tCidade Ademar;\n");
+	printf("\tCidade Tiradentes;\n");
+	printf("\tErmelino Matarazzo;\n");
+	printf("\tFreguesia do O;\n");
+	printf("\tGuaianases;\n");
+	printf("\tIpiranga;\n");
+	printf("\tItaim Paulista;\n");
+	printf("\tItaquera;\n");
+	printf("\tJabaquara;\n");
+	printf("\tJacana Tremembe;\n");
+	printf("\tLapa;\n");
+	printf("\tM'Boi Mirim;\n");
+	printf("\tMooca;\n");
+	printf("\tParelheiros;\n");
+	printf("\tPenha;\n");
+	printf("\tPerus;\n");
+	printf("\tPinheiros;\n");
+	printf("\tPirituba Jaragua;\n");
+	printf("\tSantana Tucuruvi;\n");
+	printf("\tSanto Amaro;\n");
+	printf("\tSao Mateus;\n");
+	printf("\tSao Miguel Paulista;\n");
+	printf("\tSapopemba;\n");
+	printf("\tSe;\n");
+	printf("\tVila Maria vila Guilherme;\n");
+	printf("\tVila Mariana;\n");
+	printf("\tVila Prudente;\n");
+	printf("Insira sua escolha: ");
+
+	do {
+		
+		gets(novaEntidade.subprefeitura); fflush(stdin);
+				
+	} while(!subprefeitura(novaEntidade.subprefeitura));
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	printf("\nInsira a quantidade de cestas: ");
+	scanf("%d", &novaEntidade.qtdcestas);
+	/*printf("\n\n%s", novaEntidade.cnpj);
+	getch();*/
+	
+	/*dat = fopen("OSC.DAT", "w");
+	
+	if(!dat)
+		printf("DEU RUIM NO DAT");
+	
+	if(fwrite (&novaEntidade[0], sizeof(novaEntidade[0]), 1, dat) != 1)
+		printf("DEU RUIM");
+	
+	fclose(dat);*/
+	printf("%s\n", novaEntidade.entidade);
+	printf("%s\n", novaEntidade.email);
+	printf("%d\n", novaEntidade.qtdcestas);
+	getch();
+	
+	dat = fopen("OSC.DAT", "w");
+	
+	if(!dat)
+		printf("DEU RUIM NO DAT");
+	
+	if(fwrite (&novaEntidade, sizeof(registro_osc), 1, dat) != 1)
+		printf("DEU RUIM");
+	
+	fclose(dat);
+	//escreveNoDat(novaEntidade, 1);
 	getch();
 }
 
@@ -478,36 +554,25 @@ bool ValidaCNPJ(char *cnpj) {
 	return true;
 }
 
-bool validaTipoAssentamento(char *tipo) {
-	//char *tipoAux;
+bool tipoAssentamento(char *tipo) {
 	int i, j;
-	//char *lowerTipo;
-	
-	//tipoAux = (char *) malloc(sizeof(tipo));
-	//lowerTipo = (char *) malloc(sizeof(tipo));
-
-	//tipoAux = tipo;
-	
-	/*for(i=0; i<strlen(tipoAux); i++)
-		lowerTipo[i] = tolower(tipoAux[i]);*/
-	
 	char tiposValidos[15][30] =
 	{
-		"favela",
-		"cortico",
-		"ocupacao",
-		"loteamento",
-		"comunidade indigena",
-		"grupo de mulheres",
-		"imigrantes ou refugiados",
-		"crianca e adolescente",
-		"idosos",
-		"minorias etnico-raciais",
-		"lgbti",
-		"pessoas em situacao de rua",
-		"egresso do sistema prisional",
-		"pessoa com deficiencia",
-		"outros"
+		"Favela",
+		"Cortico",
+		"Ocupacao",
+		"Loteamento",
+		"Comunidade indigena",
+		"Grupo de mulheres",
+		"Imigrantes ou Refugiados",
+		"Crianca e Adolescente",
+		"Idosos",
+		"Minorias etnico-raciais",
+		"LGBTI",
+		"Pessoas em situacao de rua",
+		"Egresso do sistema prisional",
+		"Pessoa com deficiencia",
+		"Outros"
 	};
 	
 	for(i=0; i<15; i++) {
@@ -520,6 +585,57 @@ bool validaTipoAssentamento(char *tipo) {
 		}
 	}
 	printf("\ntipo de assentamento/grupo invalido, insira novamente: ");
+	return false;
+}
+
+bool subprefeitura(char * subprefeitura)
+{
+	int i, j;
+	char subprefeiturasValidas[32][30] = {
+	"Aricanduva",
+	"Butantã",
+	"Campo Limpo",
+	"Capela do Socorro",
+	"Casa Verde",
+	"Cidade Ademar",
+	"Cidade Tiradentes",
+	"Ermelino Matarazzo",
+	"Freguesia do Ó",
+	"Guaianases",
+	"Ipiranga",
+	"Itaim Paulista",
+	"Itaquera",
+	"Jabaquara",
+	"Jaçanã Tremembé",
+	"Lapa",
+	"M'Boi Mirim",
+	"Mooca",
+	"Parelheiros",
+	"Penha",
+	"Perus",
+	"Pinheiros",
+	"Pirituba Jaraguá",
+	"Santana Tucuruvi",
+	"Santo Amaro",
+	"São Mateus",
+	"São Miguel Paulista",
+	"Sapopemba",
+	"Sé",
+	"Vila Maria vila Guilherme",
+	"Vila Mariana",
+	"Vila Prudente",
+	};
+	
+	for(i=0; i<32; i++) {
+		for(j = 0; j<strlen(subprefeitura); j++) {
+			if(subprefeitura[j] != subprefeiturasValidas[i][j]) {
+				break;
+			};	
+			
+			if (strlen(subprefeiturasValidas[i]) == strlen(subprefeitura) && j == strlen(subprefeitura)-1) return true;
+		}
+	}
+	printf("\nSubprefeitura invalida, insira novamente: ");
 	return false;
 }
 
