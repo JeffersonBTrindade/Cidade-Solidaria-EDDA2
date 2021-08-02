@@ -386,10 +386,10 @@ void mostraDAT (void)
 
 void CadastroEntidade(void) {
 	FILE *dat;
-	registro_osc novaEntidade;
+	registro_osc *novaEntidade;
 	bool cnpjValido = false;
 	
-	//novaEntidade = (registro_osc *) malloc (sizeof(registro_osc));
+	novaEntidade = (registro_osc *) malloc (sizeof(registro_osc));
 	
 	system("color 0E");
 	    
@@ -401,37 +401,37 @@ void CadastroEntidade(void) {
     printf ("INSIRA AS INFORMAÇÕES QUE DESEJA CADASTRAR: \n\n\n");
 	
 	printf("Entidade, movimento ou instituição responsável: ");
-	gets(novaEntidade.entidade); fflush(stdin);
+	gets(novaEntidade->entidade); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.entidade);
 	getch();*/
 	
 	do {
 		printf("\nCNPJ: ");
-		gets(novaEntidade.cnpj); fflush(stdin);
+		gets(novaEntidade->cnpj); fflush(stdin);
 		
 		//cnpjValido = ValidaCNPJ(novaEntidade.cnpj);
 		
-	} while(!ValidaCNPJ(novaEntidade.cnpj));
+	} while(!ValidaCNPJ(novaEntidade->cnpj));
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
 	printf("\nE-mail: ");
-	gets(novaEntidade.email); fflush(stdin);
+	gets(novaEntidade->email); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
 	printf("\nTelefone: ");
-	gets(novaEntidade.fone); fflush(stdin);
+	gets(novaEntidade->fone); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
 	printf("\nLocalidade para a qual se destinarão as doações (comunidade beneficiada): ");
-	gets(novaEntidade.comunidade); fflush(stdin);
+	gets(novaEntidade->comunidade); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
 	printf("\nEndereço da área de destino das doações: ");
-	gets(novaEntidade.enderdoar); fflush(stdin);
+	gets(novaEntidade->enderdoar); fflush(stdin);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 		
@@ -455,9 +455,9 @@ void CadastroEntidade(void) {
 	
 	do {
 		
-		gets(novaEntidade.tipoassentamento); fflush(stdin);
+		gets(novaEntidade->tipoassentamento); fflush(stdin);
 				
-	} while(!tipoAssentamento(novaEntidade.tipoassentamento));
+	} while(!tipoAssentamento(novaEntidade->tipoassentamento));
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
@@ -498,14 +498,14 @@ void CadastroEntidade(void) {
 
 	do {
 		
-		gets(novaEntidade.subprefeitura); fflush(stdin);
+		gets(novaEntidade->subprefeitura); fflush(stdin);
 				
-	} while(!subprefeitura(novaEntidade.subprefeitura));
+	} while(!subprefeitura(novaEntidade->subprefeitura));
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
 	printf("\nInsira a quantidade de cestas: ");
-	scanf("%d", &novaEntidade.qtdcestas);
+	scanf("%d", &novaEntidade->qtdcestas);
 	/*printf("\n\n%s", novaEntidade.cnpj);
 	getch();*/
 	
@@ -518,9 +518,9 @@ void CadastroEntidade(void) {
 		printf("DEU RUIM");
 	
 	fclose(dat);*/
-	printf("%s\n", novaEntidade.entidade);
-	printf("%s\n", novaEntidade.email);
-	printf("%d\n", novaEntidade.qtdcestas);
+	printf("%s\n", novaEntidade->entidade);
+	printf("%s\n", novaEntidade->email);
+	printf("%d\n", novaEntidade->qtdcestas);
 	getch();
 	
 	dat = fopen("OSC.DAT", "w");
@@ -528,7 +528,7 @@ void CadastroEntidade(void) {
 	if(!dat)
 		printf("DEU RUIM NO DAT");
 	
-	if(fwrite (&novaEntidade, sizeof(registro_osc), 1, dat) != 1)
+	if(fwrite (novaEntidade, sizeof(registro_osc), 1, dat) != 1)
 		printf("DEU RUIM");
 	
 	fclose(dat);
