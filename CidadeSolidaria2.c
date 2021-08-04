@@ -25,6 +25,7 @@ void errogravarDAT (void);
 void converte (void);
 void mostraDAT(void);
 void CadastroEntidade(void);
+void ConsultaEntidades(void);
 bool ValidaCNPJ(char *cnpj);
 bool tipoAssentamento(char *tipo);
 bool subprefeitura(char * subprefeitura);
@@ -126,6 +127,7 @@ void ordenaOscCNPJDAT(void)
    
    // Alocar dinamicamente a memï¿½ria para o vetor (vet) de registros (registro_osc)
    vet = (registro_osc  *) malloc (findSize("OSC.DAT"));
+   
    if ( vet==NULL )
    {
    	  	printf ("\nNï¿½o foi possï¿½vel alocar %ld bytes em memï¿½ria", findSize("OSC.DAT") );
@@ -142,17 +144,22 @@ void ordenaOscCNPJDAT(void)
 	  getch();
 	  exit(0);		
    }
+   
    while (!feof(ArqDAT))
    {
    	 fread (&vet[ind], sizeof(registro_osc), 1, ArqDAT);
    	 if (!feof(ArqDAT))
    	    ind++;
    }
-   fclose(ArqDAT);
    
+   fclose(ArqDAT);
+   //printf("\nentidade 66 antes quick: %s", vet[65].entidade);
+
    //Ordena o vetor pelo CNPJ
    quickSort(vet, 0, ind-1) ;
    
+   //printf("\nentidade 66 quick: %s", vet[65].entidade);
+   //getch();
    // Mostra os CNPJs ordenados
    escreveNoDat(vet, ind);
    
@@ -176,6 +183,8 @@ void escreveNoDat (registro_osc  *v, int tam)
 	for (i = 0; i < tam; i++) {
 		fwrite (&v[i], sizeof(v[i]), 1, DAT);
 	}
+	
+	fclose(DAT);
 }
 
 void  errolerCSV (void)
@@ -386,10 +395,12 @@ void mostraDAT (void)
 
 void CadastroEntidade(void) {
 	FILE *dat;
+	FILE *datTest;
 	registro_osc *novaEntidade;
+	registro_osc informacao;
 	bool cnpjValido = false;
 	
-	novaEntidade = (registro_osc *) malloc (sizeof(registro_osc));
+	novaEntidade = (registro_osc *) malloc (sizeof(registro_osc)*2);
 	
 	system("color 0E");
 	    
@@ -401,39 +412,26 @@ void CadastroEntidade(void) {
     printf ("INSIRA AS INFORMAÇÕES QUE DESEJA CADASTRAR: \n\n\n");
 	
 	printf("Entidade, movimento ou instituição responsável: ");
-	gets(novaEntidade->entidade); fflush(stdin);
-	/*printf("\n\n%s", novaEntidade.entidade);
-	getch();*/
+	gets(novaEntidade[0].entidade); fflush(stdin);
 	
 	do {
+		
 		printf("\nCNPJ: ");
-		gets(novaEntidade->cnpj); fflush(stdin);
-		
-		//cnpjValido = ValidaCNPJ(novaEntidade.cnpj);
-		
-	} while(!ValidaCNPJ(novaEntidade->cnpj));
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+		gets(novaEntidade[0].cnpj); fflush(stdin);	
+			
+	} while(!ValidaCNPJ(novaEntidade[0].cnpj));
 	
 	printf("\nE-mail: ");
-	gets(novaEntidade->email); fflush(stdin);
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	gets(novaEntidade[0].email); fflush(stdin);
 	
 	printf("\nTelefone: ");
-	gets(novaEntidade->fone); fflush(stdin);
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	gets(novaEntidade[0].fone); fflush(stdin);
 	
 	printf("\nLocalidade para a qual se destinarão as doações (comunidade beneficiada): ");
-	gets(novaEntidade->comunidade); fflush(stdin);
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	gets(novaEntidade[0].comunidade); fflush(stdin);
 	
 	printf("\nEndereço da área de destino das doações: ");
-	gets(novaEntidade->enderdoar); fflush(stdin);
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	gets(novaEntidade[0].enderdoar); fflush(stdin);
 		
 	printf("\nTipos de assentamento precário/grupo disponíveis (digite uma das opções abaixo):\n");
 	printf("\tFavela;\n");
@@ -455,11 +453,9 @@ void CadastroEntidade(void) {
 	
 	do {
 		
-		gets(novaEntidade->tipoassentamento); fflush(stdin);
+		gets(novaEntidade[0].tipoassentamento); fflush(stdin);
 				
-	} while(!tipoAssentamento(novaEntidade->tipoassentamento));
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	} while(!tipoAssentamento(novaEntidade[0].tipoassentamento));
 	
 	printf("\nSubprefeitura (digite uma das opções abaixo):\n");
 	printf("\tAricanduva;\n");
@@ -498,43 +494,91 @@ void CadastroEntidade(void) {
 
 	do {
 		
-		gets(novaEntidade->subprefeitura); fflush(stdin);
+		gets(novaEntidade[0].subprefeitura); fflush(stdin);
 				
-	} while(!subprefeitura(novaEntidade->subprefeitura));
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	} while(!subprefeitura(novaEntidade[0].subprefeitura));
 	
 	printf("\nInsira a quantidade de cestas: ");
-	scanf("%d", &novaEntidade->qtdcestas);
-	/*printf("\n\n%s", novaEntidade.cnpj);
-	getch();*/
+	scanf("%d", &novaEntidade[0].qtdcestas);
 	
-	/*dat = fopen("OSC.DAT", "w");
 	
-	if(!dat)
-		printf("DEU RUIM NO DAT");
-	
-	if(fwrite (&novaEntidade[0], sizeof(novaEntidade[0]), 1, dat) != 1)
-		printf("DEU RUIM");
-	
-	fclose(dat);*/
-	printf("%s\n", novaEntidade->entidade);
-	printf("%s\n", novaEntidade->email);
-	printf("%d\n", novaEntidade->qtdcestas);
-	getch();
-	
-	dat = fopen("OSC.DAT", "w");
+	dat = fopen("OSC.DAT", "a");
 	
 	if(!dat)
 		printf("DEU RUIM NO DAT");
 	
-	if(fwrite (novaEntidade, sizeof(registro_osc), 1, dat) != 1)
+	if(fwrite (&novaEntidade[0], sizeof(registro_osc), 1, dat) != 1)
 		printf("DEU RUIM");
 	
 	fclose(dat);
+	
+	ordenaOscCNPJDAT();
+	
+	/*datTest = fopen("OSC.DAT", "r");
+	
+	fread(&informacao, sizeof(informacao), 1, datTest);
+	printf  ("\n%s;%s;%s;%s;%s;%s;%s;%s;%d;\n\n", informacao.entidade, informacao.cnpj,informacao.email,informacao.fone,informacao.comunidade,informacao.enderdoar,informacao.tipoassentamento,informacao.subprefeitura,informacao.qtdcestas);		
+	
+	getch();
+	fclose(datTest);*/
 	//escreveNoDat(novaEntidade, 1);
 	getch();
 }
+
+void ConsultaEntidades() {
+	char *cnpj;
+	int ind = 0;
+	int j;
+	FILE *DAT;
+	registro_osc *vet;
+	
+	cnpj = (char *) malloc(15);
+	vet = (registro_osc *) malloc(findSize("OSC.DAT"));
+
+	printf("\nInsira o CNPJ da entidade que deseja consultar: ");
+	gets(cnpj);
+	
+	DAT = fopen("OSC.DAT", "r");
+	if(DAT == NULL) {
+		printf("\nErro ao ler dat");
+		getch();
+		exit(0);
+	}
+	
+	while (!feof(DAT))
+    {
+   		fread (&vet[ind], sizeof(registro_osc), 1, DAT);
+   	 	if (!feof(DAT))
+   	    ind++;
+    }
+    
+    fclose(DAT);
+    
+    for(j = 0; j < ind; j++) {
+    	for (i = 0; i < strlen(vet[j].cnpj); i++) {
+			if (vet[j].cnpj[i] != cnpj[i]) {
+				break;	
+			}
+			
+			if (i == strlen(vet[j].cnpj)-1) {
+				printf("\n\nENTIDADE: %s", vet[j].entidade);
+    			printf("\nCNPJ: %s", vet[j].cnpj);
+    			printf("\nE-MAIL: %s", vet[j].email);
+    			printf("\nTELEFONE: %s", vet[j].fone);
+    			printf("\nCOMUNIDADES A SEREM BENEFICIADAS: %s", vet[j].comunidade);
+    			printf("\nENDERECO DOADOR: %s", vet[j].enderdoar);
+    			printf("\nTIPO DE ASSENTAMENTO/GRUPO PRECARIO: %s", vet[j].tipoassentamento);
+    			printf("\nSUBPREFEITURA: %s", vet[j].subprefeitura);
+    			printf("\nQUANTIDADE DE CESTAS: %d", vet[j].qtdcestas);
+    			getch();
+    			return;
+			}
+		}
+	}
+	
+	printf("\n\n\tENTIDADE NÃO ENCONTRADA");
+	getch();
+} 
 
 bool ValidaCNPJ(char *cnpj) {
 	int i;
@@ -742,7 +786,7 @@ void GerenciamentoEntidades (void){
 	    		break;
 	    	
 	    	case 2:
-	    		//ConsultaEntidades();
+	    		ConsultaEntidades();
 	    		opcaoValida = true;
 	    		break;
 	    		
@@ -860,6 +904,7 @@ void Login (void) {
 	cnpj = (char *) malloc(sizeof(char) * 15);
 	email = (char *) malloc(sizeof(char) * 101);
 	vet = (registro_osc  *) malloc (findSize("OSC.DAT"));
+
 	if ( vet==NULL )
 	{
 		printf ("\nNão foi possível alocar %ld bytes em memória", findSize("OSC.DAT") );
@@ -874,14 +919,18 @@ void Login (void) {
 		getch();
 		exit(0);		
 	}
-
+	
+	int aux;
 	while (!feof(ArqDAT))
 	{
 		fread (&vet[ind], sizeof(registro_osc), 1, ArqDAT);
-		if (!feof(ArqDAT))
-			ind++;
-	}
 
+		if (!feof(ArqDAT))
+			ind++;				
+	}
+	printf("\n%d\n", ind);/*--------------------------------------------------------------------------------------*/
+
+	getch();
 	fclose(ArqDAT);
 	
 	system("cls");
@@ -905,6 +954,5 @@ void Login (void) {
 			printf("FALHA AO REALIZAR LOGIN, INFORMAÇÕES INCORRETAS\n\n");
 		}
 		
-	} while (!sucessoLogin);
-		
+	} while (!sucessoLogin);	
 }
