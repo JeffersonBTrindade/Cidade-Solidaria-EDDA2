@@ -23,6 +23,7 @@ void escreveNoDat (registro_osc  *v, int tam);
 void errolerCSV (void);
 void errogravarDAT (void);
 void converte (void);
+void converteAssistidos (void);
 void mostraDAT(void);
 void CadastroEntidade(void);
 void ConsultaEntidades(void);
@@ -190,7 +191,7 @@ void escreveNoDat (registro_osc  *v, int tam)
 void  errolerCSV (void)
 {
 	system ("cls");
-	printf ("\n  ERRO AO LER ARQUIVO PRODUTOS.CSV  ");
+	printf ("\n  ERRO AO LER ARQUIVO CSV  ");
 	getch();
 	exit(0);
 }
@@ -198,7 +199,7 @@ void  errolerCSV (void)
 void errogravarDAT (void)
 {
 	system ("cls");
-	printf ("\n  ERRO AO GRAVAR NO ARQUIVO PRODUTOS.DAT  ");
+	printf ("\n  ERRO AO GRAVAR NO ARQUIVO DAT  ");
 	getch();
 	exit(0);
 }
@@ -337,6 +338,167 @@ void  converte (void)
 	printf ("\n[%i] registro(s) convertido(s) de csv para dat com sucesso!!", qtdRegistros);
 	fclose (CSV);
 	fclose (DAT);
+	getch();
+	system("cls");
+}
+
+void  converteAssistidos (void)
+{
+	int a = 0;
+	assistidos_osc informacaoAssitidos;
+	FILE *CSVAssitidos;
+	FILE *DATAssitidos;
+	int   linha=1;
+	int   qtdRegistros;
+	char  ch;
+	
+	
+	CSVAssitidos = fopen ("ASSISTIDOS.CSV", "r");
+	if (CSVAssitidos==NULL)
+	{
+		system ("cls");
+		printf ("\n  ERRO AO ABRIR ARQUIVO 'ASSITIDOS.CSV'.  ");
+		getch();
+		exit(0);
+	}
+	//printf("abriu csv\n"); getch();
+
+	DATAssitidos = fopen ("ASSISTIDOS.DAT", "w");
+	if (DATAssitidos==NULL)
+	{
+		system ("cls");
+		printf ("\n  ERRO AO CRIAR ARQUIVO 'ASSITIDOS.DAT'.  ");
+		getch();
+		exit(0);
+	}
+	//printf("abriu dat\n"); getch();
+
+	/*----- CONVERSï¿½O DE CSV PARA DAT ------*/
+	qtdRegistros=0;
+	while ( !feof(CSVAssitidos) )
+	{
+		if(linha == 1)   /*pular primeira linha (tira cabeï¿½alho)*/
+		{
+			//printf("entrou linha 1\n"); getch();
+			do
+			{
+				ch = fgetc(CSVAssitidos);
+			}
+			while(ch != '\n');
+		}
+	    
+		/* Trata campos do CSV */
+        i=0;
+        do
+		{
+		  informacaoAssitidos.nomeCompleto[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.nomeCompleto[i++] != ';' );
+	    informacaoAssitidos.nomeCompleto[--i] = '\0';
+	    //printf("pa\n"); getch();
+        
+        i=0;
+		do
+		{
+		  informacaoAssitidos.dataNascimento[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.dataNascimento[i++] != ';' );
+	    informacaoAssitidos.dataNascimento[--i] = '\0';
+
+		i=0;
+    	do
+		{
+		  informacaoAssitidos.cpf[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.cpf[i++] != ';' );
+	    informacaoAssitidos.cpf[--i] = '\0';
+
+		i=0;
+        do
+		{
+		  informacaoAssitidos.municipio[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.municipio[i++] != ';' );
+	    informacaoAssitidos.municipio[--i] = '\0';
+
+		i=0;
+    	do
+		{
+		  informacaoAssitidos.logradouro[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.logradouro[i++] != ';');
+	    informacaoAssitidos.logradouro[--i] = '\0';
+        
+        i=0;
+        do
+		{
+		  informacaoAssitidos.numeroResidencial[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.numeroResidencial[i++] != ';');
+	    informacaoAssitidos.numeroResidencial[--i] = '\0';
+//printf("pazao\n"); getch();
+
+	    i=0;		
+        do
+		{
+		  informacaoAssitidos.complemento[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.complemento[i++] != ';');
+	    informacaoAssitidos.complemento[--i] = '\0';
+
+		i=0;
+    	do
+		{
+		  informacaoAssitidos.bairro[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.bairro[i++] != ';');
+	    informacaoAssitidos.bairro[--i] = '\0';
+//printf("pazao bairro\n"); getch();
+
+		i=0;
+    	do
+		{
+		  informacaoAssitidos.numeroTelefone[i] = fgetc(CSVAssitidos);
+		  if ( ferror(CSVAssitidos) ) errolerCSV();
+        }
+        while ( informacaoAssitidos.numeroTelefone[i++] != ';');
+	    informacaoAssitidos.numeroTelefone[--i] = '\0';
+//printf("pazao tel\n"); getch();
+
+	    i=0;
+	    do
+		{
+		   ch = fgetc(CSVAssitidos);
+	   	   if ( ch != '\n' && ch != EOF)
+	    	informacaoAssitidos.possuiPet[i++] = ch;
+		   else break; 
+        }
+	    while ( ch != '\n' || ch != EOF );
+	    informacaoAssitidos.possuiPet[i] = '\0';
+		
+		qtdRegistros++; /* Contabiliza um registro convertido */
+
+		/* Grava no DAT */
+	    //grava registro montado no Dat
+        if ( fwrite (&informacaoAssitidos, sizeof(informacaoAssitidos), 1, DATAssitidos) != 1 ) 
+			errogravarDAT();
+	    linha++;
+	    a++;
+	    printf("%i\n", a);
+	}
+	
+	printf(" ira\n");
+	printf ("\n[%i] registro(s) convertido(s) de csv para dat com sucesso (assistidos)!!", qtdRegistros);
+	fclose (CSVAssitidos);
+	fclose (DATAssitidos);
 	getch();
 	system("cls");
 }
@@ -687,6 +849,7 @@ bool subprefeitura(char * subprefeitura)
 int main(){ 
 	setlocale (LC_ALL, "Portuguese"); 
 	
+	converteAssistidos();
 	converte();
 	ordenaOscCNPJDAT();
 	
@@ -805,23 +968,56 @@ void GerenciamentoEntidades (void){
 
 /*Funï¿½ï¿½o MenuAssitidos */
 void GerenciamentoAssistidos (void){ 
+	int imput;
+	bool opcaoValida = false;
 	
 	/*cores do fundo e texto*/
-    system("color F4");
 	
-    system("cls"); 
-	printf ("----------------------------------------------------------\n");
-    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDï¿½RIA\n"); 
-    printf ("----------------------------------------------------------\n\n");
-	printf ("	  << CADASTRO CADASTRO DE ASSISTIDOS >>\n\n"); 
-    printf ("      1 - Cadastro de novo assistido\n"); 
-    printf ("      2 - Cadastro default\n");
-    printf ("      3 - Consulta assistidos cadastrados\n"); 
-    printf ("      0 - Voltar ao MENU PRINCIPAL\n\n"); 
-    printf ("----------------------------------------------------------\n");
-    /*printf ("Digite a opï¿½ï¿½o desejada e tecle [Enter]: \n\n\n");*/
-    printf ("Tecle [Enter] para voltar ao MENU PRINCIPAL...");
-    getchar(); 
+	do {
+	    system("color F4");
+		
+	    system("cls"); 
+		printf ("----------------------------------------------------------\n");
+	    printf ("        SOFTWARE DE GERENCIAMENTO CIDADE SOLIDï¿½RIA\n"); 
+	    printf ("----------------------------------------------------------\n\n");
+		printf ("	  << CADASTRO CADASTRO DE ASSISTIDOS >>\n\n"); 
+	    printf ("      1 - Cadastro de novo assistido\n"); 
+	    printf ("      2 - Cadastro default\n");
+	    printf ("      3 - Consulta assistidos cadastrados\n"); 
+	    printf ("      0 - Voltar ao MENU PRINCIPAL\n\n"); 
+	    printf ("----------------------------------------------------------\n");
+	    printf ("Digite a opção desejada e tecle [Enter]: ");
+    	scanf("%d", &imput); fflush(stdin);
+    	
+	    switch (imput) {
+		    	case 1:
+		    		//CadastroAssistido();
+		    		opcaoValida = true;
+		    		break;
+		    	
+		    	case 2:
+		    		converteAssistidos();
+		    		opcaoValida = true;
+		    		break;
+		    		
+		    	case 3:
+		    		//ConsultaAssistido();
+		    		opcaoValida = true;
+		    		break;
+		    		
+		    	case 0:
+					opcaoValida = true;
+					break;
+					
+				default:
+					printf("\n\n\n\t\tOpção inválida, tente novamete\n\n"); 
+		            printf ("Tecle [Enter] para continuar..."); 
+		            getch(); fflush(stdin);	
+			}
+		
+	} while (!opcaoValida);
+    
+    getch(); 
 } 
 
 /*Funï¿½ï¿½o MenuDonativos */

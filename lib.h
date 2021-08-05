@@ -26,6 +26,20 @@ typedef struct
 }
 registro_osc;
 */
+typedef struct {
+	char 	nomeCompleto			[60];
+	char    dataNascimento			[11];
+	char    cpf                   	[12];
+	char    municipio				[20];
+    char    logradouro				[40];
+    char    numeroResidencial		[5];
+    char    complemento				[10];
+    char    bairro					[25];
+    char	numeroTelefone 			[12];
+    char	possuiPet 				[5];
+}
+assistidos_osc;
+
 typedef struct
 {
 	char 	entidade				[TENT];
